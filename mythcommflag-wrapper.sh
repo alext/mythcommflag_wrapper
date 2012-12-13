@@ -113,7 +113,7 @@ else
     echo >>$LOGFILE "silence_detect() set CUTLIST to $CUTLIST"
     let BREAKS=`grep -o "-" <<< "$CUTLIST" | wc -l`
     echo >>$LOGFILE "$BREAKS break(s) found."
-                mythutil --setskiplist $CUTLIST --chanid="$CHANID" --starttime="${STARTTIME}"
+    mythutil --setskiplist $CUTLIST --chanid="$CHANID" --starttime="${STARTTIME}"
     RC=$?
     echo >>$LOGFILE "mythutil setskiplist returned $RC"
     if [ $RC -eq 0 ]; then
