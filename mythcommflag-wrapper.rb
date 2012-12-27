@@ -2,6 +2,8 @@
 # encoding: utf-8
 
 require 'logger'
+require 'singleton'
+require 'mysql2'
 
 class MythCommflag
   LOG_FILE = "/var/log/mythtv/mythcommflag-wrapper"
@@ -43,6 +45,41 @@ class MythCommflag
       raw = `mysql -h myth -u mythtv -psecret -e 'SELECT r.cutlist, c.callsign, r.chanid, r.starttime, r.basename FROM jobqueue AS j LEFT OUTER JOIN recorded AS r ON j.chanid = r.chanid AND j.starttime = r.starttime LEFT OUTER JOIN channel AS c ON j.chanid = c.chanid WHERE j.id = #{@id}' mythconverg`
       values = raw.split($/).last.split("\t")
       #[:cutlist, :callsign, :chanid, :starttime, :basename].zip(raw.lines[1].split("\t"))
+    end
+  end
+
+  class DB
+    HOME_CONFIG = "#{ENV['HOME']}/.mythtv/config.xml"
+    ETC_CONFIG = "/etc/mythtv/config.xml"
+
+    include Singleton
+
+    def query(string)
+      connection.query(string)
+    end
+
+    private
+
+    def connection
+      @connection ||= Mysql2::Client.new(db_config)
+    end
+
+    def db_config
+      if File.exist?(HOME_CONFIG)
+        file = HOME_CONFIG
+      elsif File.exist?(ETC_CONFIG)
+        file = ETC_CONFIG
+      else
+        raise "Can't find DB config"
+      end
+      doc = REXML::Document.new(File.open(file, 'r'))
+      {
+        :host => doc.elements.to_a("//DBHostName").first.text,
+        :port => doc.elements.to_a("//DBPort").first.text.to_i,
+        :username => doc.elements.to_a("//DBUserName").first.text,
+        :password => doc.elements.to_a("//DBPassword").first.text,
+        :database => doc.elements.to_a("//DBName").first.text,
+      }
     end
   end
 end
