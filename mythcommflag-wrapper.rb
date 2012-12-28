@@ -40,12 +40,32 @@ class MythCommflag
       @id = id.to_i
     end
 
-    #private
+    def respond_to_missing?(name, include_private = false)
+      data.has_key?(name.to_s) || super
+    end
+    def method_missing(name, *args)
+      if data.has_key?(name.to_s)
+        data[name.to_s]
+      else
+        super
+      end
+    end
+
+    private
+
+    def data
+      @data ||= load_data
+    end
 
     def load_data
-      raw = `mysql -h myth -u mythtv -psecret -e 'SELECT r.cutlist, c.callsign, r.chanid, r.starttime, r.basename FROM jobqueue AS j LEFT OUTER JOIN recorded AS r ON j.chanid = r.chanid AND j.starttime = r.starttime LEFT OUTER JOIN channel AS c ON j.chanid = c.chanid WHERE j.id = #{@id}' mythconverg`
-      values = raw.split($/).last.split("\t")
-      #[:cutlist, :callsign, :chanid, :starttime, :basename].zip(raw.lines[1].split("\t"))
+      query_str = <<-EOSQL
+SELECT r.cutlist, c.callsign, r.chanid, r.starttime, r.basename
+FROM jobqueue AS j
+LEFT OUTER JOIN recorded AS r ON j.chanid = r.chanid AND j.starttime = r.starttime
+LEFT OUTER JOIN channel AS c ON j.chanid = c.chanid
+WHERE j.id = #{@id}
+      EOSQL
+      DB.query(query_str).first
     end
   end
 
