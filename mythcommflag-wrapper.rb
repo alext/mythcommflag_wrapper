@@ -29,6 +29,7 @@ class MythCommflag
   private
 
   def has_cutlist?
+    @job.cutlist > 0
   end
 
   def logger
