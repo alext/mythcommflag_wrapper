@@ -55,6 +55,10 @@ class MythCommflag
 
     include Singleton
 
+    def self.query(string)
+      instance.query(string)
+    end
+
     def query(string)
       connection.query(string)
     end
