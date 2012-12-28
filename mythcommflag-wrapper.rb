@@ -3,6 +3,7 @@
 
 require 'logger'
 require 'singleton'
+require 'rexml/document'
 require 'mysql2'
 
 class MythCommflag
@@ -70,7 +71,7 @@ class MythCommflag
       elsif File.exist?(ETC_CONFIG)
         file = ETC_CONFIG
       else
-        raise "Can't find DB config"
+        raise "No config.xml found in #{HOME_CONFIG} or #{ETC_CONFIG}"
       end
       doc = REXML::Document.new(File.open(file, 'r'))
       {
