@@ -41,21 +41,29 @@ class MythCommflag
   end
 
   def process
-    logger.info "running job #{@job_id}"
+    logger.info "running job #{@job_id}, callsign:#{@job.callsign}, chanid:#{@job.chanid}, starttime:#{@job.starttime}"
     if has_cutlist?
       logger.warn "program already has (manual?) cutlist, exiting"
       return
     end
     unless whitelisted_channel?
-      logger.info "won't run silence-detect, running mythcommflag #{ARGV.join(' ')}"
+      logger.info "won't run silence-detect for #{@job.callsign}, running mythcommflag #{ARGV.join(' ')}"
       exec 'mythcommflag', *ARGV
     end
 
+    logger.info "Callsign #{@job.callsign} in whitelist - will run slience_detect"
     @job.commflagging_in_progress!
+    logger.debug "silence_detect #{filename}"
     silence_detect
-    set_skip_list
-    @job.commflagging_done!(@breaks.size)
-
+    logger.info "#{@breaks.size} break(s) found."
+    logger.debug "slience_detect found cuts: #{@breaks.map {|c| c.join('-') }.join(',')}"
+    if set_skip_list
+      logger.info "set_skip_list returned success"
+      @job.commflagging_done!(@breaks.size)
+    else
+      logger.error "mythutil set_skip_list failed: returned #{$?.exitstatus}"
+      @job.commflagging_failed!
+    end
   end
 
   private
@@ -136,6 +144,10 @@ class MythCommflag
     def commflagging_done!(breaks_found)
       DB.query("UPDATE recorded SET commflagged=1 WHERE chanid=#{chanid} AND starttime='#{starttime}'")
       DB.query("UPDATE jobqueue SET status=272, comment='Finished, #{breaks_found} break(s) found.' WHERE id=#{@id}")
+    end
+
+    def commflagging_failed!
+      DB.query("UPDATE recorded SET commflagged=0 WHERE chanid=#{chanid} AND starttime='#{starttime}'")
     end
 
     def respond_to_missing?(name, include_private = false)
