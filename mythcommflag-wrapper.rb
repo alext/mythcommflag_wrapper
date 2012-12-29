@@ -29,6 +29,7 @@ class MythCommflag
 
     #@job.commflagging_in_progress!
     silence_detect
+    #set_skip_list
     #@job.commflagging_done!(@breaks.size)
 
   end
@@ -69,6 +70,13 @@ class MythCommflag
     ensure
       FileUtils.rm_r(tmpdir)
     end
+  end
+
+  def set_skip_list
+    break_string = @breaks.map do |br|
+      br.map(&:to_i).join('-')
+    end.join(',')
+    system 'mythutil', '--setskiplist', break_string, "--chanid=#{@job.chanid}", "--starttime=#{@job.starttime}"
   end
 
   def filename
