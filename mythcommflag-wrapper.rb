@@ -133,9 +133,9 @@ class MythCommflag
       DB.query("UPDATE recorded SET commflagged=2 WHERE chanid=#{chanid} AND starttime='#{starttime}'")
     end
 
-    def commflagging_done!(breaks = nil)
+    def commflagging_done!(breaks_found)
       DB.query("UPDATE recorded SET commflagged=1 WHERE chanid=#{chanid} AND starttime='#{starttime}'")
-      DB.query("UPDATE jobqueue SET status=272, comment='Finished, n break(s) found.' WHERE id=#{@id}")
+      DB.query("UPDATE jobqueue SET status=272, comment='Finished, #{breaks_found} break(s) found.' WHERE id=#{@id}")
     end
 
     def respond_to_missing?(name, include_private = false)
