@@ -12,6 +12,7 @@ class MythCommflag
   MP3SPLT_OPTS = 'th=-70,min=0.15'
   MAX_COMMBREAK_SECS = 400
   LOG_FILE = "/var/log/mythtv/mythcommflag-wrapper.log"
+  #LOG_FILE = STDOUT
   CHANNELS = [
     "FIVE USA",
     "FIVE",
@@ -113,7 +114,7 @@ class MythCommflag
     break_string = @breaks.map do |(start, finish)|
       [(start * 25 + 1).to_i, (finish * 25 - 25).to_i].join('-')
     end.join(',')
-    system 'mythutil', '--setskiplist', break_string, "--chanid=#{@job.chanid}", "--starttime=#{@job.starttime}"
+    system 'mythutil', '--setskiplist', break_string, "--chanid=#{@job.chanid}", "--starttime=#{@job.starttime.strftime('%Y%m%d%H%M%S')}"
   end
 
   def filename
