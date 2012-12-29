@@ -101,8 +101,8 @@ class MythCommflag
   end
 
   def set_skip_list
-    break_string = @breaks.map do |br|
-      br.map(&:to_i).join('-')
+    break_string = @breaks.map do |(start, finish)|
+      [(start * 25 + 1).to_i, (finish * 25 - 25).to_i].join('-')
     end.join(',')
     system 'mythutil', '--setskiplist', break_string, "--chanid=#{@job.chanid}", "--starttime=#{@job.starttime}"
   end
