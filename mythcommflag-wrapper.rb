@@ -11,7 +11,7 @@ require 'mysql2'
 class MythCommflag
   MP3SPLT_OPTS = 'th=-70,min=0.15'
   MAX_COMMBREAK_SECS = 400
-  LOG_FILE = "/var/log/mythtv/mythcommflag-wrapper"
+  LOG_FILE = "/var/log/mythtv/mythcommflag-wrapper.log"
   CHANNELS = [
     "FIVE USA",
     "FIVE",
@@ -42,7 +42,7 @@ class MythCommflag
   end
 
   def process
-    logger.info "running job #{@job_id}, callsign:#{@job.callsign}, chanid:#{@job.chanid}, starttime:#{@job.starttime}"
+    logger.info "running job #{@job.id}, callsign:#{@job.callsign}, chanid:#{@job.chanid}, starttime:#{@job.starttime}"
     if has_cutlist?
       logger.warn "program already has (manual?) cutlist, exiting"
       return
@@ -137,6 +137,7 @@ class MythCommflag
     def initialize(id)
       @id = id.to_i
     end
+    attr_reader :id
 
     def commflagging_in_progress!
       DB.query("UPDATE recorded SET commflagged=2 WHERE chanid=#{chanid} AND starttime='#{starttime}'")
