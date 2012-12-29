@@ -11,6 +11,30 @@ class MythCommflag
   MP3SPLT_OPTS = 'th=-70,min=0.15'
   MAX_COMMBREAK_SECS = 400
   LOG_FILE = "/var/log/mythtv/mythcommflag-wrapper"
+  CHANNELS = [
+    "FIVE USA",
+    "FIVE",
+    "Channel 4",
+    "Channel 4 HD",
+    "Channel 4+1",
+    "More 4",
+    "More4 +1",
+    "E4",
+    "E4+1",
+    "Film4",
+    "Film4 +1",
+    "ITV1",
+    "ITV1 HD",
+    "ITV1 +1",
+    "ITV2",
+    "ITV2 +1",
+    "ITV3",
+    "ITV3 +1",
+    "ITV4",
+    "ITV4 +1",
+    "Dave",
+    "Dave ja vu",
+  ]
 
   def initialize(job_id)
     @job = Job.new(job_id)
@@ -38,6 +62,10 @@ class MythCommflag
 
   def has_cutlist?
     @job.cutlist > 0
+  end
+
+  def whitelisted_channel?
+    CHANNELS.include? @job.callsign
   end
 
   def silence_detect(source_file = filename)
