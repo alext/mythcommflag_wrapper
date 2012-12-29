@@ -2,11 +2,14 @@
 # encoding: utf-8
 
 require 'logger'
+require 'tmpdir'
 require 'singleton'
 require 'rexml/document'
 require 'mysql2'
 
 class MythCommflag
+  MP3SPLT_OPTS = 'th=-70,min=0.15'
+  MAX_COMMBREAK_SECS = 400
   LOG_FILE = "/var/log/mythtv/mythcommflag-wrapper"
 
   def initialize(job_id)
@@ -30,6 +33,51 @@ class MythCommflag
 
   def has_cutlist?
     @job.cutlist > 0
+  end
+
+  def silence_detect(source_file = filename)
+    tmpdir = Dir.mktmpdir('mythcommflag-')
+    begin
+      Dir.chdir(tmpdir) do
+        system 'ionice', '-c3', 'nice', 'mythffmpeg', '-i', source_file, '-acodec', 'copy', 'sound.mp3'
+        system 'ionice', '-c3', 'nice', 'mp3splt', '-s', '-p', MP3SPLT_OPTS, 'sound.mp3'
+        breaks = []
+        File.open('mp3splt.log', 'r') do |f|
+          f.gets
+          f.gets
+          break_start = 0
+          break_finish = nil
+          f.lines.sort_by {|line| line.to_f }.each do |line|
+            start, finish, rest = line.split(/\s+/, 3).map(&:to_f)
+            if finish - break_start < MAX_COMMBREAK_SECS
+              break_finish = finish
+            else
+              breaks << [break_start, break_finish]
+              break_start = start
+              break_finish = finish
+            end
+          end
+          breaks << [break_start, 9999999]
+        end
+
+        @breaks = breaks
+      end
+    ensure
+      FileUtils.rm_r(tmpdir)
+    end
+  end
+
+  def filename
+    storage_group_dirs.each do |dir|
+      file = File.join(dir, @job.basename)
+      return file if File.exist?(file)
+    end
+    logger.error "Can't find file #{@job.basename} in any of the storage groups"
+    exit 1
+  end
+
+  def storage_group_dirs
+    @storage_group_dirs ||= DB.query('SELECT dirname FROM storagegroup').to_a.map {|r| r['dirname']}
   end
 
   def logger
