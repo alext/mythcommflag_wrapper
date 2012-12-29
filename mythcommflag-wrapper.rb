@@ -27,6 +27,10 @@ class MythCommflag
       exec 'mythcommflag', *ARGV
     end
 
+    #@job.commflagging_in_progress!
+    silence_detect
+    #@job.commflagging_done!(@breaks.size)
+
   end
 
   private
@@ -87,6 +91,15 @@ class MythCommflag
   class Job
     def initialize(id)
       @id = id.to_i
+    end
+
+    def commflagging_in_progress!
+      DB.query("UPDATE recorded SET commflagged=2 WHERE chanid=#{chanid} AND starttime='#{starttime}'")
+    end
+
+    def commflagging_done!(breaks = nil)
+      DB.query("UPDATE recorded SET commflagged=1 WHERE chanid=#{chanid} AND starttime='#{starttime}'")
+      DB.query("UPDATE jobqueue SET status=272, comment='Finished, n break(s) found.' WHERE id=#{@id}")
     end
 
     def respond_to_missing?(name, include_private = false)
