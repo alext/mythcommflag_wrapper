@@ -51,10 +51,10 @@ class MythCommflag
       exec 'mythcommflag', *ARGV
     end
 
-    #@job.commflagging_in_progress!
+    @job.commflagging_in_progress!
     silence_detect
-    #set_skip_list
-    #@job.commflagging_done!(@breaks.size)
+    set_skip_list
+    @job.commflagging_done!(@breaks.size)
 
   end
 
