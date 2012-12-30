@@ -141,16 +141,16 @@ class MythCommflag
     attr_reader :id
 
     def commflagging_in_progress!
-      DB.query("UPDATE recorded SET commflagged=2 WHERE chanid=#{chanid} AND starttime='#{starttime}'")
+      DB.query("UPDATE recorded SET commflagged=2 WHERE chanid=#{chanid} AND starttime='#{starttime.strftime('%Y%m%d%H%M%S')}'")
     end
 
     def commflagging_done!(breaks_found)
-      DB.query("UPDATE recorded SET commflagged=1 WHERE chanid=#{chanid} AND starttime='#{starttime}'")
+      DB.query("UPDATE recorded SET commflagged=1 WHERE chanid=#{chanid} AND starttime='#{starttime.strftime('%Y%m%d%H%M%S')}'")
       DB.query("UPDATE jobqueue SET status=272, comment='Finished, #{breaks_found} break(s) found.' WHERE id=#{@id}")
     end
 
     def commflagging_failed!
-      DB.query("UPDATE recorded SET commflagged=0 WHERE chanid=#{chanid} AND starttime='#{starttime}'")
+      DB.query("UPDATE recorded SET commflagged=0 WHERE chanid=#{chanid} AND starttime='#{starttime.strftime('%Y%m%d%H%M%S')}'")
     end
 
     def respond_to_missing?(name, include_private = false)
