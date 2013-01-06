@@ -1,6 +1,8 @@
 #!/usr/bin/python
 
 import os
+import logging
+from logging.handlers import SysLogHandler
 from sys import argv
 from MythTV import MythDB, Channel, Recorded, Job
 
@@ -59,6 +61,15 @@ def run_commflagging(jobid):
         job.update()
     else:
         rec.update({'commflagged': 0})
+
+def logger():
+    return logging.getLogger('mythcommflag-wrapper')
+
+def setup_logger():
+    my_logger = logger()
+    my_logger.setLevel(logging.DEBUG)
+    handler = SysLogHandler(address='/dev/log', facility=SysLogHandler.LOG_LOCAL6)
+    my_logger.addHandler(handler)
 
 
 if __name__ == '__main__':
