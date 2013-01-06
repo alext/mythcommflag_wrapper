@@ -54,7 +54,9 @@ def run_commflagging(jobid):
     # set_skip_list
     if success:
         rec.update({'commflagged': 1})
-        job.update({'status': 272, 'comment': 'Finished, %(breaks) break(s) found.' % {'breaks': 0}})
+        job.status = 272
+        job.comment = 'Finished, %(breaks) break(s) found.' % {'breaks': 0}
+        job.update()
     else:
         rec.update({'commflagged': 0})
 
