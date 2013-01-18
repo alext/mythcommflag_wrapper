@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 require 'rubygems'
-require 'logger'
+require 'syslog'
 require 'tmpdir'
 require 'singleton'
 require 'rexml/document'
@@ -11,8 +11,7 @@ require 'mysql2'
 class MythCommflag
   MP3SPLT_OPTS = 'th=-70,min=0.15'
   MAX_COMMBREAK_SECS = 400
-  LOG_FILE = "/var/log/mythtv/mythcommflag-wrapper.log"
-  #LOG_FILE = STDOUT
+  LOG_FACILITY = Syslog::LOG_LOCAL6
   CHANNELS = [
     "FIVE USA",
     "FIVE",
@@ -132,7 +131,8 @@ class MythCommflag
   end
 
   def logger
-    @logger ||= Logger.new(LOG_FILE)
+    Syslog.open('mythcommflag-wrapper', Syslog::LOG_PID, LOG_FACILITY) unless Syslog.opened?
+    Syslog
   end
 
   class Job
