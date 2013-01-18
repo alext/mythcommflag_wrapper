@@ -31,6 +31,7 @@ CHANNELS = (
         "ITV4 +1",
         "Dave",
         "Dave ja vu",
+        "Really",
         )
 
 def silence_detect(filename):

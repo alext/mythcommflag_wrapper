@@ -101,7 +101,7 @@ else
 #safe list
 # Channel 4 channels seem to work too, but sometimes last cut is too long?. E4/channel 4 treats trailers as program. The silence markers are only either side of actual adverts. E4 often has trailers before and after adverts, which will not be cut, and appear within the wanted show. 
 # Works for other FIVE channels with caveat that they include news bulletins which are't cut
-  if [ "$CALLSIGN" = "FIVE USA" -o "$CALLSIGN" = "FIVE" -o "$CALLSIGN" = "Channel 4" -o "$CALLSIGN" = "Channel 4 HD" -o "$CALLSIGN" = "Channel 4+1" -o "$CALLSIGN" = "More 4" -o "$CALLSIGN" = "More4 +1" -o "$CALLSIGN" = "E4" -o "$CALLSIGN" = "E4+1" -o "$CALLSIGN" = "Film4" -o "$CALLSIGN" = "Film4 +1" -o "$CALLSIGN" = "ITV1" -o "$CALLSIGN" = "ITV1 HD" -o "$CALLSIGN" = "ITV1 +1" -o "$CALLSIGN" = "ITV2" -o "$CALLSIGN" = "ITV2 +1" -o "$CALLSIGN" = "ITV3" -o "$CALLSIGN" = "ITV3 +1" -o "$CALLSIGN" = "ITV4" -o "$CALLSIGN" = "ITV4 +1" -o "$CALLSIGN" = "Dave" -o "$CALLSIGN" = "Dave ja vu" ]; then
+  if [ "$CALLSIGN" = "FIVE USA" -o "$CALLSIGN" = "FIVE" -o "$CALLSIGN" = "Channel 4" -o "$CALLSIGN" = "Channel 4 HD" -o "$CALLSIGN" = "Channel 4+1" -o "$CALLSIGN" = "More 4" -o "$CALLSIGN" = "More4 +1" -o "$CALLSIGN" = "E4" -o "$CALLSIGN" = "E4+1" -o "$CALLSIGN" = "Film4" -o "$CALLSIGN" = "Film4 +1" -o "$CALLSIGN" = "ITV1" -o "$CALLSIGN" = "ITV1 HD" -o "$CALLSIGN" = "ITV1 +1" -o "$CALLSIGN" = "ITV2" -o "$CALLSIGN" = "ITV2 +1" -o "$CALLSIGN" = "ITV3" -o "$CALLSIGN" = "ITV3 +1" -o "$CALLSIGN" = "ITV4" -o "$CALLSIGN" = "ITV4 +1" -o "$CALLSIGN" = "Dave" -o "$CALLSIGN" = "Dave ja vu" -o "$CALLSIGN" = "Really" ]; then
 
 #No Safe list, always use silence detect
   #if [ 1 = 1 ]; then   
