@@ -96,7 +96,7 @@ class MythCommflag
             if finish - break_start < MAX_COMMBREAK_SECS
               break_finish = finish
             else
-              breaks << [break_start, break_finish]
+              breaks << [break_start, break_finish] unless break_finish.nil?
               break_start = start
               break_finish = finish
             end
