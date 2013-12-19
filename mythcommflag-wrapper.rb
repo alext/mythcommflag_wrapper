@@ -12,30 +12,10 @@ class MythCommflag
   MP3SPLT_OPTS = 'th=-70,min=0.15'
   MAX_COMMBREAK_SECS = 400
   LOG_FACILITY = Syslog::LOG_LOCAL6
-  CHANNELS = [
-    "FIVE USA",
-    "FIVE",
-    "Channel 4",
-    "Channel 4 HD",
-    "Channel 4+1",
-    "More 4",
-    "More4 +1",
-    "E4",
-    "E4+1",
-    "Film4",
-    "Film4 +1",
-    "ITV1",
-    "ITV1 HD",
-    "ITV1 +1",
-    "ITV2",
-    "ITV2 +1",
-    "ITV3",
-    "ITV3 +1",
-    "ITV4",
-    "ITV4 +1",
-    "Dave",
-    "Dave ja vu",
-    "Really",
+  BLACKLISTED_CHANELS = [
+    'Channel 5',
+    'Channel 5+1',
+    'Quest',
   ]
 
   def initialize(job_id)
@@ -48,7 +28,7 @@ class MythCommflag
       logger.warn "program already has (manual?) cutlist, exiting"
       return
     end
-    unless whitelisted_channel?
+    if blacklisted_channel?
       logger.info "won't run silence-detect for #{@job.callsign}, running mythcommflag #{ARGV.join(' ')}"
       exec 'mythcommflag', *ARGV
     end
@@ -74,8 +54,8 @@ class MythCommflag
     @job.cutlist > 0
   end
 
-  def whitelisted_channel?
-    CHANNELS.include? @job.callsign
+  def blacklisted_channel?
+    BLACKLISTED_CHANELS.include? @job.callsign
   end
 
   def silence_detect(source_file = filename)
