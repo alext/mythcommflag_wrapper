@@ -193,11 +193,11 @@ WHERE j.id = #{@id}
       end
       doc = REXML::Document.new(File.open(file, 'r'))
       {
-        :host => doc.elements.to_a("//DBHostName").first.text,
-        :port => doc.elements.to_a("//DBPort").first.text.to_i,
-        :username => doc.elements.to_a("//DBUserName").first.text,
-        :password => doc.elements.to_a("//DBPassword").first.text,
-        :database => doc.elements.to_a("//DBName").first.text,
+        :host => doc.elements.to_a("//Database/Host").first.text,
+        :port => doc.elements.to_a("//Database/Port").first.text.to_i,
+        :username => doc.elements.to_a("//Database/UserName").first.text,
+        :password => doc.elements.to_a("//Database/Password").first.text,
+        :database => doc.elements.to_a("//Database/DatabaseName").first.text,
       }
     end
   end
