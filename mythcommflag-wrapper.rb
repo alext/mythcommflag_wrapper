@@ -62,8 +62,8 @@ class MythCommflag
     tmpdir = Dir.mktmpdir('mythcommflag-')
     begin
       Dir.chdir(tmpdir) do
-        system 'ionice', '-c3', 'nice', 'avconv', '-i', source_file, '-c:a', 'copy', 'sound.mp3'
-        system 'ionice', '-c3', 'nice', 'mp3splt', '-s', '-p', MP3SPLT_OPTS, 'sound.mp3'
+        system 'ionice', '-c3', 'nice', 'mythffmpeg', '-i', source_file, '-c:a', 'copy', 'sound.mp2'
+        system 'ionice', '-c3', 'nice', 'mp3splt', '-s', '-p', MP3SPLT_OPTS, 'sound.mp2'
         breaks = []
         File.open('mp3splt.log', 'r') do |f|
           f.gets
