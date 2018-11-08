@@ -204,7 +204,7 @@ WHERE j.id = #{@id}
 end
 
 if $0 == __FILE__
-  if ARGV.size == 4 and ARGV[0] == '-j' and ARGV[2] == '-V'
+  if ARGV.size >= 2 and ARGV[0] == '-j'
     MythCommflag.new(ARGV[1]).process
   else
     exec 'mythcommflag', *ARGV
