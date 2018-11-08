@@ -8,10 +8,14 @@ require 'singleton'
 require 'rexml/document'
 require 'mysql2'
 
+def logger
+  Syslog.open('mythcommflag-wrapper', Syslog::LOG_PID, Syslog::LOG_LOCAL6) unless Syslog.opened?
+  Syslog
+end
+
 class MythCommflag
   MP3SPLT_OPTS = 'th=-70,min=0.15'
   MAX_COMMBREAK_SECS = 400
-  LOG_FACILITY = Syslog::LOG_LOCAL6
   BLACKLISTED_CHANELS = [
     'Channel 5',
     'Channel 5+1',
@@ -110,11 +114,6 @@ class MythCommflag
     @storage_group_dirs ||= DB.query('SELECT dirname FROM storagegroup').to_a.map {|r| r['dirname']}
   end
 
-  def logger
-    Syslog.open('mythcommflag-wrapper', Syslog::LOG_PID, LOG_FACILITY) unless Syslog.opened?
-    Syslog
-  end
-
   class Job
     def initialize(id)
       @id = id.to_i
@@ -207,6 +206,7 @@ if $0 == __FILE__
   if ARGV.size >= 2 and ARGV[0] == '-j'
     MythCommflag.new(ARGV[1]).process
   else
+    logger.info "Unrecognised ARGS '#{ARGV.join(' ')}'. falling back to mythcommflag"
     exec 'mythcommflag', *ARGV
   end
 end
