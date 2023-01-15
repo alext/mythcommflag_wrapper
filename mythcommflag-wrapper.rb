@@ -66,8 +66,11 @@ class MythCommflag
     tmpdir = Dir.mktmpdir('mythcommflag-')
     begin
       Dir.chdir(tmpdir) do
+        logger.debug("Starting mythtranscode #{source_file} into #{tmpdir}")
         system 'ionice', '-c3', 'nice', 'mythffmpeg', '-i', source_file, '-c:a', 'copy', 'sound.mp2'
+        logger.debug("Starting mp3splt")
         system 'ionice', '-c3', 'nice', 'mp3splt', '-s', '-p', MP3SPLT_OPTS, 'sound.mp2'
+        logger.debug("Processing mp3splt log output")
         breaks = []
         File.open('mp3splt.log', 'r') do |f|
           f.gets
@@ -204,7 +207,12 @@ end
 
 if $0 == __FILE__
   if ARGV.size >= 2 and ARGV[0] == '-j'
-    MythCommflag.new(ARGV[1]).process
+    begin
+      MythCommflag.new(ARGV[1]).process
+    rescue Exception => e
+      logger.err("Mythcommflag raised exception: #{e}")
+      raise
+    end
   else
     logger.info "Unrecognised ARGS '#{ARGV.join(' ')}'. falling back to mythcommflag"
     exec 'mythcommflag', *ARGV
