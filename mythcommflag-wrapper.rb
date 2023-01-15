@@ -77,7 +77,7 @@ class MythCommflag
           f.gets
           break_start = 0
           break_finish = nil
-          f.lines.sort_by {|line| line.to_f }.each do |line|
+          f.each_line.sort_by {|line| line.to_f }.each do |line|
             start, finish, rest = line.split(/\s+/, 3).map(&:to_f)
             if finish - break_start < MAX_COMMBREAK_SECS
               break_finish = finish
